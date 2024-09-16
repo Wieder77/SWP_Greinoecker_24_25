@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>FIFA Manager</title>
+     <script src="data/teams_fifa22.js"></script>
+     <script src="data/players_fifa23.js"></script>
+    <style>
+        body {
+            background-color: #FFC0CB; /* Helles Rosa */
+        }
+    </style>
+</head>
+<body>
+<select id="teams" onchange="change_teams">
+</select>
+
+<select id="team_members">
+</select>
+
+<img id="player_img"/>
+
+<br/><br/>
+<b>Allgemeine Inforamtionen zum Spieler: </b>
+<br/><br/>
+<b>Nachname: </b>
+<i id="player_name"> </i>
+<br/>
+<b>Alter: </b>
+<i id="player_age"></i>
+<br/>
+<b>Nation: </b>
+<i id="player_nation"></i>
+<b>    </b>
+<img id="player_flag"/>
+<br/><br/><br/>
+<select id="team1" onchange="change_teams">
+</select>
+<select id="team2" onchange="change_teams">
+</select>
+<br/>
+<button>Team1 hinzufuegen</button>
+<button>Team2 hinzufuegen</button>
+<script>
+function change_teams(e)
+{
+    let teams_sel = e.target; //which team is now selected
+    let v = teams_sel.value; //get the value of the selected team for further queries
+    let t = teams_sel.options[teams_sel.selectedIndex].text; //which text is associated with the value
+    console.log(v + t + e);
+
+    let team_members_sel = document.getElementById("team_members")
+    let current_players = players.filter(p => p.Club === t); //get all players of the selected team
+    console.log(current_players);
+    team_members_sel.innerHTML = ""; //clear the player option box
+    current_players.forEach(d => team_members_sel.add(new Option(d.Name,d.ID))); //add all players to the option box
+}
+
+function change_team_player(e)
+{
+    let player_sel = e.target;
+    let v = player_sel.value;
+    let t = player_sel.options[player_sel.selectedIndex].text;
+
+    let curr_player = players.find(p => p.Name === t);
+    let player_img = document.getElementById("player_img");
+    player_img.src = curr_player.Photo;
+
+    let player_name = document.getElementById("player_name");
+    player_name.innerText = curr_player.Name;
+    let player_age = document.getElementById("player_age");
+    player_age.innerText = curr_player.Age;
+    let player_nation = document.getElementById("player_nation");
+    player_nation.innerText = curr_player.Nationality;
+
+    let player_flag = document.getElementById("player_flag");
+    player_flag.src = curr_player.Flag;
+
+
+}
+
+//fill the teams option box with the team names
+let teams_sel = document.getElementById("teams");
+teams.forEach(d => teams_sel.add(new Option(d.Name,d.ID)));
+teams_sel.addEventListener("change", change_teams);
+
+let team_members_sel = document.getElementById("team_members");
+team_members_sel.addEventListener("change", change_team_player); //this is another way how to add an eventlistener to the option box
+
+let team1 = document.getElementById("team1");
+team1.forEach(d => team1.add(new Option(d.Name,d.ID)));
+team1.addEventListener("change", change_teams);
+</script>
+</body>
+</html>
