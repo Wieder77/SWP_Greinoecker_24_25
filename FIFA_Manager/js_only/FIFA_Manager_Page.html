@@ -5,9 +5,33 @@
     <title>FIFA Manager</title>
      <script src="data/teams_fifa22.js"></script>
      <script src="data/players_fifa23.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+        <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+
     <style>
         body {
-            background-color: #FFC0CB; /* Helles Rosa */
+            background-color: #FFC0CB;
+        }
+         .manager-container {
+            display: flex;
+            justify-content: flex-start;
+            gap: 30%;
+            width: 100%;
+            margin: 0 auto;
+        }
+
+         .select { width: 1180px; }
+        #team2_hinzufuegen {
+            margin-left: auto;
+        }
+        #team2{
+         margin-left: auto;
+        }
+        #team22{
+            width: 45%;
+        }
+        #team11{
+            width: 45%;
         }
     </style>
 </head>
@@ -31,17 +55,33 @@
 <br/>
 <b>Nation: </b>
 <i id="player_nation"></i>
-<b>    </b>
+<b></b>
 <img id="player_flag"/>
 <br/><br/><br/>
-<select id="team1" onchange="change_teams">
-</select>
-<select id="team2" onchange="change_teams">
-</select>
-<br/>
-<button>Team1 hinzufuegen</button>
-<button>Team2 hinzufuegen</button>
+  <div class="row mt-4">
+       <div class="col-md-6">
+           <select id="team1" onchange="change_teams">
+           </select>
+           <button id="team1_hinzufuegen">Team1 hinzufuegen</button>
+           <br/>
+           <select size="9" id="team11" onchange="change_teams">
+          </select>
+       </div>
+      <div class="col-md-6">
+          <select id="team2" onchange="change_teams">
+          </select>
+          <button id="team2_hinzufuegen">Team2 hinzufuegen</button>
+          <br/>
+          <select size="9"id="team22" onchange="change_teams" >
+          </select>
+      </div>
+  </div>
+
+<br/><br/>
+<button id="del_button">Ausgewaehlten Spieler löschen</button>
 <script>
+   let arr1 = [];
+   let arr2 = [];
 function change_teams(e)
 {
     let teams_sel = e.target; //which team is now selected
@@ -55,14 +95,21 @@ function change_teams(e)
     team_members_sel.innerHTML = ""; //clear the player option box
     current_players.forEach(d => team_members_sel.add(new Option(d.Name,d.ID))); //add all players to the option box
 }
-
+function change_selectTeams(e){
+ let teams_sel = e.target; //which team is now selected
+    let v = teams_sel.value; //get the value of the selected team for further queries
+    let t = teams_sel.options[teams_sel.selectedIndex].text; //which text is associated with the value
+    console.log(v + t + e);
+}
 function change_team_player(e)
 {
     let player_sel = e.target;
+
     let v = player_sel.value;
     let t = player_sel.options[player_sel.selectedIndex].text;
 
     let curr_player = players.find(p => p.Name === t);
+    alert(curr_player.Name);
     let player_img = document.getElementById("player_img");
     player_img.src = curr_player.Photo;
 
@@ -75,7 +122,37 @@ function change_team_player(e)
 
     let player_flag = document.getElementById("player_flag");
     player_flag.src = curr_player.Flag;
+}
 
+function team2_hinzufuegen(e){
+   let player_sel = document.getElementById("team_members");
+   let selected_player_id = player_sel.value;
+   if (selected_player_id && !arr2.some(item => item === selected_player_id)) {
+        arr2.push(selected_player_id);
+       alert(selected_player_id);
+      let selected_player_name = player_sel.options[player_sel.selectedIndex].text;
+       let team2_list = document.getElementById("team22");
+       let option = new Option(selected_player_name, selected_player_id);
+       team2_list.add(option);
+   } else {
+       alert("Kein Spieler ausgewählt oder der Spieler ist bereits im Team");
+   }
+}
+function team1_hinzufuegen(e){
+   let player_sel = document.getElementById("team_members");
+   let selected_player_id = player_sel.value;
+   if (selected_player_id && !arr1.some(item => item === selected_player_id)) {
+        arr1.push(selected_player_id);
+       alert(selected_player_id);
+      let selected_player_name = player_sel.options[player_sel.selectedIndex].text;
+       let team1_list = document.getElementById("team11");
+       let option = new Option(selected_player_name, selected_player_id);
+       team1_list.add(option);
+   } else {
+       alert("Kein Spieler ausgewählt oder der Spieler ist bereits im Team");
+   }
+}
+function delte_player(e){
 
 }
 
@@ -87,9 +164,28 @@ teams_sel.addEventListener("change", change_teams);
 let team_members_sel = document.getElementById("team_members");
 team_members_sel.addEventListener("change", change_team_player); //this is another way how to add an eventlistener to the option box
 
-let team1 = document.getElementById("team1");
-team1.forEach(d => team1.add(new Option(d.Name,d.ID)));
-team1.addEventListener("change", change_teams);
+let team1_sel = document.getElementById("team1");
+teams.forEach(d => team1_sel.add(new Option(d.Name,d.ID)));
+team1_sel.addEventListener("change", change_selectTeams);
+
+let team2_sel = document.getElementById("team2");
+teams.forEach(d => team2_sel.add(new Option(d.Name,d.ID)));
+team2_sel.addEventListener("change", change_selectTeams);
+
+let team1_button = document.getElementById("team1_hinzufuegen");
+team1_button.addEventListener('click', team1_hinzufuegen);
+
+
+let team2_button = document.getElementById("team2_hinzufuegen");
+team2_button.addEventListener('click', team2_hinzufuegen);
+
+
+let del_button = document.getElementById("del_button");
+del_button.addEventListener('click', function(){
+alert("Del Button wurde gedrückt");
+});
+
+
 </script>
 </body>
 </html>
