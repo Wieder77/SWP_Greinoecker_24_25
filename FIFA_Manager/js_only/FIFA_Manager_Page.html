@@ -153,7 +153,25 @@ function team1_hinzufuegen(e){
    }
 }
 function delte_player(e){
+    alert("is here");
 
+    let team1_list = document.getElementById("team11");
+    let team2_list = document.getElementById("team22");
+
+    let team1_sel_index = team1_list.selectedIndex;
+    let team2_sel_index = team2_list.selectedIndex;
+
+    if (team1_sel_index !== -1) {
+         let team1_sel_value = team1_list.options[team1_sel_index].value;
+         arr1 = arr1.filter(item => item !== team1_sel_value);
+         team1_list.remove(team1_sel_index);
+    }
+
+    if (team2_sel_index !== -1) {
+         let team2_sel_value = team2_list.options[team2_sel_index].value;
+         arr2 = arr2.filter(item => item !== team2_sel_value);
+         team2_list.remove(team2_sel_index);
+    }
 }
 
 //fill the teams option box with the team names
@@ -181,9 +199,8 @@ team2_button.addEventListener('click', team2_hinzufuegen);
 
 
 let del_button = document.getElementById("del_button");
-del_button.addEventListener('click', function(){
-alert("Del Button wurde gedrückt");
-});
+del_button.addEventListener('click', delte_player);
+
 
 
 </script>
