@@ -1,0 +1,145 @@
+<script src="https://unpkg.com/vue@3"></script>
+
+<html>
+    <head>
+        <meta charset="utf-8">
+    </head>
+    <body>
+        <div id="app">
+            <h1>Hangman Game</h1>
+            <h2>Time: {{ timer }}</h2>
+            <h2>Highscore: {{ highscore }}</h2>
+            <h2>
+                <span v-for="(char, index) in word" :key="index">
+                    {{ correctletters.includes(char) ? char : "_" }} 
+                </span>
+            </h2>
+            
+            <h3>Guessed Letters: {{ guessedletters.join(', ') }}</h3>
+            <h3>Correct Letters: {{ correctletters.join(', ') }}</h3>
+
+            <div>
+                <img :src="`./images/${mistakes}.jpg`" alt="Hangman Image" />
+            </div>
+
+            <br><br><br>
+
+            <div>
+                <button 
+                    v-for="letter in letter"
+                    :key="letter" 
+                    @click="letterPressed(letter)"
+                    :disabled="guessedletters.includes(letter)"
+                >
+                    {{ letter }}
+                </button>
+            </div>
+
+            <!-- Neue Tabelle für Zeiten am unteren Ende der Seite -->
+            <h2>Time Table</h2>
+            <table border="1">
+                <thead>
+                    <tr>
+                        <th>Game</th>
+                        <th>Time (seconds)</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr v-for="(time, index) in times" :key="index">
+                        <td>Game {{ index + 1 }}</td>
+                        <td>{{ time }} seconds</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </body>
+</html>
+
+<script src="./data/words.js"></script>
+<script>
+    const { createApp } = Vue
+    createApp({
+        data() {
+            return {
+                letter: Array.from(Array(26)).map((e, i) => String.fromCharCode(i + 97)),
+                words: words,
+                word: '',
+                guessedletters: [],
+                correctletters: [],
+                mistakes: 0,
+                timer: 0,
+                highscore: 0,
+                times: [],
+            }
+        },
+        methods: {
+            randomWord() {
+                this.word = this.words[Math.floor(Math.random() * this.words.length)]
+            },
+            checkLetter(letter) {
+                if (this.word.includes(letter)) {
+                    this.correctletters.push(letter)
+                    this.win()
+                } else {
+                    this.mistakes++
+                    console.log('Incorrect')
+                    if (this.mistakes === 11) {
+                        this.resetScore()
+                        alert('You Lost')
+                    }
+                }
+            },
+            letterPressed(letter) {
+                if (!this.guessedletters.includes(letter)) {
+                    this.guessedletters.push(letter)
+                    this.checkLetter(letter)
+                }
+            },
+            resetScore() {
+                this.mistakes = 0
+                this.guessedletters = []
+                this.correctletters = []
+                this.randomWord()
+                this.timer = 0 
+            },
+            startTimer() {
+                if (!this.intervalId) {
+                    this.intervalId = setInterval(() => {
+                        this.timer++;
+                    }, 1000); 
+                }
+            },
+            setHighscore() {
+                if (this.timer < this.highscore || this.highscore === 0) {
+                    this.highscore = this.timer
+                }
+            },
+            win() {
+                if (this.word.length === this.correctletters.length) {
+                    alert('You Win')
+                    this.times.push(this.timer) 
+                    this.setHighscore()
+                    this.resetScore()
+                }
+            },
+        
+            cheat(event) {
+                if (event.key === 'c') {
+                    this.correctletters = this.word.split('')
+                    this.win()
+                }
+            },
+        },
+        mounted() {
+            window.addEventListener('keydown', this.cheat)
+            this.randomWord();
+            this.startTimer();
+        },
+        beforeUnmount() {
+            window.removeEventListener('keydown', this.cheat);
+        },
+        beforeUnmount() {
+            window.removeEventListener('keydown', this.cheat);
+        }
+    }).mount('#app')
+</script>
